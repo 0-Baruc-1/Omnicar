@@ -18,24 +18,53 @@ byte colPins[COLS] = {5, 18, 19, 21}; // Conectar a los pines GPIO que no interf
 // los pines de las filas, los pines de las columnas, y las dimensiones del teclado.
 
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
-
+byte state = 0;
 void setup() {
   Serial.begin(9600); // Inicia la comunicación serial a 9600 baudios
 }
 
 void loop() {
-  char key = keypad.getKey(); // Obtiene la tecla presionada en el teclado.
-  if (key != NO_KEY) {
-    if (key == '2') {
-      Serial.write('F'); // Envía la letra 'F' cuando se presiona la tecla '2'
-    } else if (key == '4'){
-      Serial.write('L');
-    } else if (key == '6'){ 
-      Serial.write('R');
-    } else if (key == '8'){
-      Serial.write('B');
-    } else {
-      Serial.write('S');
-    }
+  char key = keypad.getKey();
+  if(key != NO_KEY){
+    state = keypad.getState(key);
+    Serial.println("Tecla: " + (String)key + " Estado: " + state);
+    
   }
 }
+
+bool isPressed(byte state){
+  switch (state)
+  {
+  case 0:
+    return false;
+    break;
+  case 1:
+    return true;
+    break;
+  case 2:
+    return true;
+    break;
+  case 3:
+    return false;
+    break;
+  }
+}
+
+  // if (keypad.isPressed('2')) {
+  //   Serial.write("F"); // Envía la letra "F" cuando se presiona la tecla "2"
+  // } else if (keypad.isPressed('4')){
+  //   Serial.write("L");
+  // } else if (keypad.isPressed('6')){ 
+  //   Serial.write("R");
+  // } else if (keypad.isPressed('8')){
+  //   Serial.write("B");
+  // } else if (keypad.isPressed('1')){
+  //   Serial.write("FL");
+  // } else if (keypad.isPressed('3')){
+  //   Serial.write("FR");
+  // } else if (keypad.isPressed('7')){
+  //   Serial.write("BL");
+  // } else if (keypad.isPressed('9')){
+  //   Serial.write("BR");
+  // } 
+  // delay(100);
