@@ -9,7 +9,6 @@ char keys[ROWS][COLS] = {
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
-
 // Conecta los pines del teclado a los pines GPIO del ESP32
 byte rowPins[ROWS] = {25, 33, 32, 35}; // Conectar a los pines GPIO que no interfieran con el arranque, establece los pines del ESP32 a los que están conectadas las filas del teclado.
 byte colPins[COLS] = {5, 18, 19, 21}; // Conectar a los pines GPIO que no interfieran con el arranque, pines del ESP32 a los que están conectadas las columnas del teclado.
@@ -19,21 +18,21 @@ byte colPins[COLS] = {5, 18, 19, 21}; // Conectar a los pines GPIO que no interf
 
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 byte state = 0;
+char key = keypad.getKey();
+
 void setup() {
   Serial.begin(9600); // Inicia la comunicación serial a 9600 baudios
 }
 
 void loop() {
-  char key = keypad.getKey();
-  if(key != NO_KEY){
+  if(key == NO_KEY || (key != NO_KEY && !isPressed(key))){
+    key = keypad.getKey();
+    Serial.write('S');
+  } else {
     state = keypad.getState(key);
     Serial.println("Tecla: " + (String)key + " Estado: " + state);
-    if(isPressed(key)){
-      Serial.write(messajeToSend(key).c_str());
-    }
+    Serial.write(messajeToSend(key).c_str());
     delay(100);
-  } else {
-    Serial.write('S');
   }
 }
 
