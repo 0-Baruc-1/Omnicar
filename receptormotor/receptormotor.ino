@@ -1,9 +1,9 @@
 // Definir los pines para el L298N
-const int IN1 = 18; // D18
-const int IN2 = 19; // D19
+const int IN1 = 18; 
+const int IN2 = 19; 
 const int ENA = 4;  // D4 (se asume que se usa PWM con ledcWrite)
-const int IN3 = 22; // D22
-const int IN4 = 23; // D23
+const int IN3 = 22; 
+const int IN4 = 23;
 const int ENB = 5;  // D5 (se asume que se usa PWM con ledcWrite)
 
 void setup() {
@@ -22,24 +22,56 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     char cmd = Serial.read(); // Definir una variable cmd de lectura de la comunicacion serial entre los modulos XBee
-    Serial.print("Comando recibido: ");
-    Serial.println(cmd);
-
     // Realizar el movimiento correspondiente de los motores segun el comando recibido
     if (cmd == 'F') {
       // Mover hacia adelante
-      digitalWrite(IN1, HIGH);
-      digitalWrite(IN2, LOW);
-      digitalWrite(IN3, HIGH);
-      digitalWrite(IN4, LOW);
-      digitalWrite(ENA, HIGH);
-      digitalWrite(ENB, HIGH);
+      izquierdaSuperior_F();
+      derechaSuperior_F();
       delay(50);
     } else if (cmd == 'B') {
       // Mover hacia atras
-      // Aquí se agregaría el código para mover los motores hacia atrás
+      izquierdaSuperior_B();
+      derechaSuperior_B();
+    } else if(cmd == 'S'){
+      // NO MOVIMIENTO
+      izquierdaSuperior_OFF();
+      derechaSuperior_OFF();
     }
-    // Agregar más condiciones para otros comandos si es necesario
   }
 }
 
+void izquierdaSuperior_F(){
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(ENA, HIGH);
+}
+
+void izquierdaSuperior_B(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(ENA, HIGH);
+}
+
+void derechaSuperior_F(){
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  digitalWrite(ENB, HIGH);
+}
+
+void derechaSuperior_B(){
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  digitalWrite(ENB, HIGH);
+}
+
+void izquierdaSuperior_OFF(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(ENA, LOW);
+}
+
+void derechaSuperior_OFF(){
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  digitalWrite(ENB, LOW);
+}
