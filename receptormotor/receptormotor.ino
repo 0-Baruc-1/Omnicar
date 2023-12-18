@@ -21,18 +21,18 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    char cmd = Serial.read(); // Definir una variable cmd de lectura de la comunicacion serial entre los modulos XBee
+    String cmd = (String)Serial.read(); // Definir una variable cmd de lectura de la comunicacion serial entre los modulos XBee
     // Realizar el movimiento correspondiente de los motores segun el comando recibido
-    if (cmd == 'F') {
+    if (cmd == "F") {
       // Mover hacia adelante
       izquierdaSuperior_F();
       derechaSuperior_F();
       delay(50);
-    } else if (cmd == 'B') {
+    } else if (cmd == "B") {
       // Mover hacia atras
       izquierdaSuperior_B();
       derechaSuperior_B();
-    } else if(cmd == 'S'){
+    } else if(cmd == "S"){
       // NO MOVIMIENTO
       izquierdaSuperior_OFF();
       derechaSuperior_OFF();
