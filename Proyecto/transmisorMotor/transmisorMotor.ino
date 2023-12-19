@@ -27,15 +27,6 @@ void setup() {
 
 void loop() {
   char key = keypad.getKey(); // Obtiene la tecla presionada en el teclado.
-  // if(pastKey != NO_KEY){
-  //   if(key == NO_KEY){
-  //     key = pastKey;
-  //   }
-  // } else if(key != NO_KEY){
-  //   pastKey = key;
-  //   String mensaje = messajeToSend(key);
-  //   Serial.write(mensaje.c_str());
-  // }
   if (!(pastKey == NO_KEY && key == NO_KEY)){
     if(pastKey != NO_KEY && key == NO_KEY) {
       key = pastKey;
@@ -43,32 +34,32 @@ void loop() {
       pastKey = key;
     }
     String mensaje = messajeToSend(key);
-    if(mensaje.length() > 0) {
-      Serial.write(mensaje.c_str());
-    }
+    Serial.write(mensaje.c_str());
+    Serial.println();
   }
 }
 
 String messajeToSend(char key){
   switch (key){
-  case 1:
+  case '1':
     return "FL";
-  case 2:
+  case '2':
     return "F"; // Envía la letra "F" cuando se presiona la tecla "2"
-  case 3:
+  case '3':
     return "FR";
-  case 4:
+  case '4':
     return "L";
-  case 5:
+  case '5':
     return "S";
-  case 6:
+  case '6':
     return "R";
-  case 7:
+  case '7':
     return "BL";
-  case 8:
+  case '8':
     return "B";
-  case 9:
+  case '9':
     return "BR";
   default:
-    return "";
+    return "S";
+  }
 };
