@@ -43,28 +43,32 @@ void loop() {
       pastKey = key;
     }
     String mensaje = messajeToSend(key);
-    Serial.write(mensaje.c_str());
+    if(mensaje.length() > 0) {
+      Serial.write(mensaje.c_str());
+    }
   }
 }
 
 String messajeToSend(char key){
-  if(key == '2') {
-    return "F"; // Envía la letra "F" cuando se presiona la tecla "2"
-  } else if (key == '4'){
-    return "L";
-  } else if (key == '6'){ 
-    return "R";
-  } else if (key == '8'){
-    return "B";
-  } else if (key == '1'){
+  switch (key){
+  case 1:
     return "FL";
-  } else if (key == '3'){
+  case 2:
+    return "F"; // Envía la letra "F" cuando se presiona la tecla "2"
+  case 3:
     return "FR";
-  } else if (key == '7'){
-    return "BL";
-  } else if (key == '9'){
-    return "BR";
-  } else if (key == '5'){
+  case 4:
+    return "L";
+  case 5:
     return "S";
-  };
+  case 6:
+    return "R";
+  case 7:
+    return "BL";
+  case 8:
+    return "B";
+  case 9:
+    return "BR";
+  default:
+    return "";
 };
