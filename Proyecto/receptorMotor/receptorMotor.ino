@@ -1,21 +1,23 @@
 // Definir los pines para el L298N
 const int IN1 = 19; 
 const int IN2 = 18; 
-const int ENA = 4;  // D4 (se asume que se usa PWM con ledcWrite)
+const int ENA = 4;  // D4 (se asume que se usa PWM con analogWrite)
 const int IN3 = 23; 
 const int IN4 = 22;
-const int ENB = 5;  // D5 (se asume que se usa PWM con ledcWrite)
+const int ENB = 5;  // D5 (se asume que se usa PWM con analogWrite)
 
 
 const int IN5 = 27;
 const int IN6 = 26;
-const int ENBB = 14;  // D5 (se asume que se usa PWM con ledcWrite)
+const int ENBB = 14;  // D5 (se asume que se usa PWM con analogWrite)
 const int IN7 = 13;
 const int IN8 = 12;
-const int ENAA = 25;  // D5 (se asume que se usa PWM con ledcWrite)
+const int ENAA = 25;  // D5 (se asume que se usa PWM con analogWrite)
 
 const int on_Off = 33; 
 
+const int apagado = 0;
+const int prendido = 100;
 void setup() {
   // Configurar los pines del controlador L298N como salidas
   pinMode(IN1, OUTPUT);
@@ -35,15 +37,6 @@ void setup() {
   pinMode(on_Off, OUTPUT);
   digitalWrite(on_Off, LOW);
 
-  ledcAttachPin(ENA, 1);   // Asignar el pin ENA al canal PWM 1
-  ledcAttachPin(ENB, 2);   // Asignar el pin ENB al canal PWM 2
-  ledcAttachPin(ENAA, 3);  // Asignar el pin ENAA al canal PWM 3
-  ledcAttachPin(ENBB, 4);  // Asignar el pin ENBB al canal PWM 4
-
-  ledcSetup(1, 500, 70);   // Canal PWM 1, frecuencia: 500 Hz, rango de duty cycle: 0-255
-  ledcSetup(2, 500, 70);   // Canal PWM 2, frecuencia: 500 Hz, rango de duty cycle: 0-255
-  ledcSetup(3, 500, 70);   // Canal PWM 3, frecuencia: 500 Hz, rango de duty cycle: 0-255
-  ledcSetup(4, 500, 70);   // Canal PWM 4, frecuencia: 500 Hz, rango de duty cycle: 0-255
   // Configurar la comunicación serial con el modulo XBee
   Serial.begin(9600);
 }
@@ -62,10 +55,13 @@ void loop() {
         // Procesar el comando
         buffer[bufferIndex] = '\0'; // Terminar el string
         String cmd = String(buffer);
-        if(cmd == "X"){
+        cmd.trim();
+        
+        if(cmd == "ST"){
+          delay(500);
           digitalRead(on_Off) == HIGH ? digitalWrite(on_Off,LOW) : digitalWrite(on_Off, HIGH);
         }
-        if(digitalRead(on_Off) == HIGH && cmd != "X") processCommand(cmd);
+        processCommand(cmd);
         bufferIndex = 0; // Restablecer el índice del buffer
       }
     } else {
@@ -77,8 +73,9 @@ void loop() {
 }
 
 void processCommand(String cmd) {
+  Serial.println(cmd);
   // Realizar el movimiento correspondiente de los motores segun el comando recibido
-  cmd.trim(); // Eliminar espacios en blanco y caracteres de control
+  // Eliminar espacios en blanco y caracteres de control
   //Serial.println("Comando recibido: " + cmd); // Imprimir el comando recibido
   if (cmd == "F") {
     // Mover hacia adelante
@@ -145,37 +142,35 @@ void processCommand(String cmd) {
 void left_Top_Forward(){
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
-  digitalWrite(ENA, HIGH);
+  analogWrite(ENA, prendido);
 }
 
 void left_Top_Back(){
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
-  digitalWrite(ENA, HIGH);
+  analogWrite(ENA, prendido);
 }
 
 void right_Top_Forward(){
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
-  digitalWrite(ENB, HIGH);
+  analogWrite(ENB, prendido);
 }
 
 void right_Top_Back(){
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
-  digitalWrite(ENB, HIGH);
+  analogWrite(ENB, prendido);
 }
 
 void left_Top_OFF(){
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
-  digitalWrite(ENA, LOW);
+ 
+  analogWrite(ENA, apagado);
 }
 
 void right_Top_OFF(){
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, LOW);
-  digitalWrite(ENB, LOW);//
+ 
+  analogWrite(ENB, apagado);
 }
 
 //---------------------RUEDAS DE ABAJO-------------------------
@@ -183,35 +178,33 @@ void right_Top_OFF(){
 void left_Bottom_Forward(){
   digitalWrite(IN5, HIGH);
   digitalWrite(IN6, LOW);
-  digitalWrite(ENAA, HIGH);
+  analogWrite(ENAA, prendido);
 }
 
 void right_Bottom_Forward(){
   digitalWrite(IN7, HIGH);
   digitalWrite(IN8, LOW);
-  digitalWrite(ENBB, HIGH);
+  analogWrite(ENBB, prendido);
 }
 
 void left_Bottom_Back(){//
   digitalWrite(IN5, LOW);
   digitalWrite(IN6, HIGH);
-  digitalWrite(ENAA, HIGH);
+  analogWrite(ENAA, prendido);
 }
 
 void right_Bottom_Back(){
   digitalWrite(IN7, LOW);
   digitalWrite(IN8, HIGH);
-  digitalWrite(ENBB, HIGH);
+  analogWrite(ENBB, prendido);
 }
 
 void left_Bottom_OFF(){
-  digitalWrite(IN5, LOW);
-  digitalWrite(IN6, LOW);
-  digitalWrite(ENAA, LOW);
+ 
+  analogWrite(ENAA, apagado);
 }
 
 void right_Bottom_OFF(){
-  digitalWrite(IN7, LOW);
-  digitalWrite(IN8, LOW);
-  digitalWrite(ENBB, LOW);
+  
+  analogWrite(ENBB, apagado);
 }
