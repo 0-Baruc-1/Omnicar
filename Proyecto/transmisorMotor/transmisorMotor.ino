@@ -28,7 +28,10 @@ void loop() {
   char key = keypad.getKey(); // Obtiene la tecla presionada en el teclado.
   if (!(pastKey == NO_KEY && key == NO_KEY)){
     if(key == '*'){
-      Serial.write("X");
+      String mensaje = onOFF();
+      Serial.write(mensaje.c_str());
+      Serial.println("");
+
       if(pastKey != NO_KEY) pastKey = NO_KEY;
     } else {
       if(pastKey != NO_KEY && key == NO_KEY) {
@@ -39,6 +42,7 @@ void loop() {
       String mensaje = messajeToSend(key);
       if(mensaje != ""){
         Serial.write(mensaje.c_str());
+        Serial.println("");
       }
       delay(10); // Agrega un pequeño retraso entre lecturas de teclas
     }
@@ -73,3 +77,7 @@ String messajeToSend(char key){
     return "";
   }
 };
+
+String onOFF(){
+  return "ST";
+}
