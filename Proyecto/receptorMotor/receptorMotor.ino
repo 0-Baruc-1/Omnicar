@@ -14,7 +14,7 @@ const int IN7 = 13;
 const int IN8 = 12;
 const int ENAA = 25;  // D5 (se asume que se usa PWM con ledcWrite)
 
-
+const int on_Off = 33; 
 
 void setup() {
   // Configurar los pines del controlador L298N como salidas
@@ -22,14 +22,28 @@ void setup() {
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
-  pinMode(ENA, OUTPUT);
-  pinMode(ENB, OUTPUT);
   pinMode(IN5, OUTPUT);
   pinMode(IN6, OUTPUT);
   pinMode(IN7, OUTPUT);
   pinMode(IN8, OUTPUT);
+
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
   pinMode(ENAA, OUTPUT);
   pinMode(ENBB, OUTPUT);
+
+  pinMode(on_Off, OUTPUT);
+  digitalWrite(on_Off, LOW);
+
+  ledcAttachPin(ENA, 1);   // Asignar el pin ENA al canal PWM 1
+  ledcAttachPin(ENB, 2);   // Asignar el pin ENB al canal PWM 2
+  ledcAttachPin(ENAA, 3);  // Asignar el pin ENAA al canal PWM 3
+  ledcAttachPin(ENBB, 4);  // Asignar el pin ENBB al canal PWM 4
+
+  ledcSetup(1, 500, 70);   // Canal PWM 1, frecuencia: 500 Hz, rango de duty cycle: 0-255
+  ledcSetup(2, 500, 70);   // Canal PWM 2, frecuencia: 500 Hz, rango de duty cycle: 0-255
+  ledcSetup(3, 500, 70);   // Canal PWM 3, frecuencia: 500 Hz, rango de duty cycle: 0-255
+  ledcSetup(4, 500, 70);   // Canal PWM 4, frecuencia: 500 Hz, rango de duty cycle: 0-255
   // Configurar la comunicación serial con el modulo XBee
   Serial.begin(9600);
 }
@@ -48,7 +62,10 @@ void loop() {
         // Procesar el comando
         buffer[bufferIndex] = '\0'; // Terminar el string
         String cmd = String(buffer);
-        processCommand(cmd);
+        if(cmd == "X"){
+          digitalRead(on_Off) == HIGH ? digitalWrite(on_Off,LOW) : digitalWrite(on_Off, HIGH);
+        }
+        if(digitalRead(on_Off) == HIGH && cmd != "X") processCommand(cmd);
         bufferIndex = 0; // Restablecer el índice del buffer
       }
     } else {
@@ -63,7 +80,6 @@ void processCommand(String cmd) {
   // Realizar el movimiento correspondiente de los motores segun el comando recibido
   cmd.trim(); // Eliminar espacios en blanco y caracteres de control
   //Serial.println("Comando recibido: " + cmd); // Imprimir el comando recibido
-  
   if (cmd == "F") {
     // Mover hacia adelante
     left_Top_Forward();
@@ -113,9 +129,18 @@ void processCommand(String cmd) {
     right_Top_OFF();
     left_Bottom_OFF();
     right_Bottom_OFF();
-  } 
+  } else if(cmd == "H"){
+    left_Top_Forward();
+    left_Bottom_Forward();
+    right_Top_Back();
+    right_Bottom_Back();
+  } else if(cmd == "AH"){
+    left_Bottom_Back();
+    left_Top_Back();
+    right_Top_Forward();
+    right_Bottom_Forward();
+  }
 }
-
 
 void left_Top_Forward(){
   digitalWrite(IN1, HIGH);
@@ -142,10 +167,14 @@ void right_Top_Back(){
 }
 
 void left_Top_OFF(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
   digitalWrite(ENA, LOW);
 }
 
 void right_Top_OFF(){
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
   digitalWrite(ENB, LOW);//
 }
 
@@ -176,9 +205,13 @@ void right_Bottom_Back(){
 }
 
 void left_Bottom_OFF(){
+  digitalWrite(IN5, LOW);
+  digitalWrite(IN6, LOW);
   digitalWrite(ENAA, LOW);
 }
 
 void right_Bottom_OFF(){
+  digitalWrite(IN7, LOW);
+  digitalWrite(IN8, LOW);
   digitalWrite(ENBB, LOW);
 }

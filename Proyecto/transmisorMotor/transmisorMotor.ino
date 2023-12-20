@@ -24,18 +24,24 @@ char pastKey = NO_KEY;
 void setup() {
   Serial.begin(9600); // Inicia la comunicación serial a 9600 baudios
 }
-
 void loop() {
   char key = keypad.getKey(); // Obtiene la tecla presionada en el teclado.
   if (!(pastKey == NO_KEY && key == NO_KEY)){
-    if(pastKey != NO_KEY && key == NO_KEY) {
-      key = pastKey;
+    if(key == '*'){
+      Serial.write("X");
+      if(pastKey != NO_KEY) pastKey = NO_KEY;
     } else {
-      pastKey = key;
+      if(pastKey != NO_KEY && key == NO_KEY) {
+        key = pastKey;
+      } else {
+        pastKey = key;
+      }
+      String mensaje = messajeToSend(key);
+      if(mensaje != ""){
+        Serial.write(mensaje.c_str());
+      }
+      delay(10); // Agrega un pequeño retraso entre lecturas de teclas
     }
-    String mensaje = messajeToSend(key);
-    Serial.write(mensaje.c_str());
-    Serial.println();
   }
 }
 
@@ -59,7 +65,11 @@ String messajeToSend(char key){
     return "B";
   case '9':
     return "BR";
+  case 'A':
+    return "H";
+  case 'B':
+    return "AH";
   default:
-    return "S";
+    return "";
   }
 };
