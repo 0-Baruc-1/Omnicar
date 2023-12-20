@@ -62,8 +62,11 @@ void loop() {
         // Procesar el comando
         buffer[bufferIndex] = '\0'; // Terminar el string
         String cmd = String(buffer);
+        cmd.trim(); // Eliminar espacios en blanco y caracteres de control
         if(cmd == "X"){
-          digitalRead(on_Off) == HIGH ? digitalWrite(on_Off,LOW) : digitalWrite(on_Off, HIGH);
+          Serial.println(cmd);
+          delay(500);
+          digitalWrite(on_Off, !digitalRead(on_Off));
         }
         if(digitalRead(on_Off) == HIGH && cmd != "X") processCommand(cmd);
         bufferIndex = 0; // Restablecer el índice del buffer
@@ -78,7 +81,6 @@ void loop() {
 
 void processCommand(String cmd) {
   // Realizar el movimiento correspondiente de los motores segun el comando recibido
-  cmd.trim(); // Eliminar espacios en blanco y caracteres de control
   //Serial.println("Comando recibido: " + cmd); // Imprimir el comando recibido
   if (cmd == "F") {
     // Mover hacia adelante
