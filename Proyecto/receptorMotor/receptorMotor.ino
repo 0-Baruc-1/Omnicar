@@ -17,7 +17,7 @@ const int ENAA = 25;  // D5 (se asume que se usa PWM con analogWrite)
 const int on_Off = 33; 
 
 const int apagado = 0;
-const int prendido = 100;
+const int prendido = 70;
 void setup() {
   // Configurar los pines del controlador L298N como salidas
   pinMode(IN1, OUTPUT);
@@ -55,19 +55,11 @@ void loop() {
         // Procesar el comando
         buffer[bufferIndex] = '\0'; // Terminar el string
         String cmd = String(buffer);
-<<<<<<< HEAD
         cmd.trim();
         
         if(cmd == "ST"){
           delay(500);
           digitalRead(on_Off) == HIGH ? digitalWrite(on_Off,LOW) : digitalWrite(on_Off, HIGH);
-=======
-        cmd.trim(); // Eliminar espacios en blanco y caracteres de control
-        if(cmd == "X"){
-          Serial.println(cmd);
-          delay(500);
-          digitalWrite(on_Off, !digitalRead(on_Off));
->>>>>>> 39fae750cfc7f14b3b9ce78bc74b99fb4968168d
         }
         processCommand(cmd);
         bufferIndex = 0; // Restablecer el índice del buffer
@@ -82,11 +74,8 @@ void loop() {
 
 void processCommand(String cmd) {
   Serial.println(cmd);
+  if(cmd == "ST") return;
   // Realizar el movimiento correspondiente de los motores segun el comando recibido
-<<<<<<< HEAD
-  // Eliminar espacios en blanco y caracteres de control
-=======
->>>>>>> 39fae750cfc7f14b3b9ce78bc74b99fb4968168d
   //Serial.println("Comando recibido: " + cmd); // Imprimir el comando recibido
   if (cmd == "F") {
     // Mover hacia adelante
